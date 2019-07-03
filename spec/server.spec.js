@@ -4,6 +4,7 @@ const Request = require('request');
 describe('Simple test to check GET functionality', () => {
   let server;
   beforeAll(() => {
+    // eslint-disable-next-line global-require
     server = require('../build/server');
   });
 
