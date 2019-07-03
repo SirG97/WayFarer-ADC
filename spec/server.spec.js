@@ -24,7 +24,7 @@ describe('Simple test to check GET functionality', () => {
     });
 
     it('status 200', () => {
-      expect(data.body).toBe('Yay! This is my response.');
+      expect(data.body).toBe('Yay! This is my response');
     });
   });
 });
