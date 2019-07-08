@@ -4,7 +4,7 @@
   "description": "WayFarer is a public bus transportation booking server API, an Andela developer challenge for Andela Blended Learning.",
   "main": "index.js",
   "scripts": {
-    "test": "jasmine",
+    "test": "mocha",
     "build": "babel server.js --out-dir build",
     "dev-start": "babel-watch server.js"
   },
@@ -23,8 +23,6 @@
     "babel-cli": "^6.26.0",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "jasmine": "^3.4.0",
-    "jasmine-node": "^3.0.0",
     "moment": "^2.24.0",
     "pg": "^7.11.0",
     "request": "^2.88.0",
