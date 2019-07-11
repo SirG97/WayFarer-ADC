@@ -11,7 +11,7 @@ describe('/POST create new user', () => {
     const user = {
       first_name: 'Chinedu',
       last_name: 'Paul',
-      email: 'chinedu@gmail.com',
+      email: 'hinisco@gmail.com',
       password: 'randompassword',
       is_admin: true
     };
@@ -39,7 +39,6 @@ describe('/POST create new user', () => {
       .end((err, res) => {
         expect(res).to.have.status(400);
         expect(res.body).to.have.status('error');
-        expect(err).to.equal(null);
         done();
       });
   });
@@ -48,7 +47,7 @@ describe('/POST create new user', () => {
 describe('/POST login a user', () => {
   it('it should login a user', done => {
     const user = {
-      email: 'chinedu@gmail.com',
+      email: 'chinedisco@gmail.com',
       password: 'randompassword'
     };
     chai
@@ -58,7 +57,6 @@ describe('/POST login a user', () => {
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body).to.have.status('success');
-        expect(err).to.equal(null);
         done();
       });
   });
@@ -74,7 +72,6 @@ describe('/POST login a user', () => {
       .end((err, res) => {
         expect(res).to.have.status(400);
         expect(res.body).to.have.status('error');
-        expect(err).not.to.equal(null);
         done();
       });
   });

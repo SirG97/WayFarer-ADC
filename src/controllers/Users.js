@@ -58,6 +58,45 @@ const User = {
       }
       return res.status(400).send(error);
     }
+  },
+  /**
+   * Login
+   * @param {object} req
+   * @param {object} res
+   * @returns {object} user object
+   */
+  async login(req, res) {
+    // Validate the data
+    if (!req.body.email) {
+      return res.status(400).send({ status: 'error', error: 'Come on pal! provide you email' });
+    }
+    if (!req.body.password) {
+      return res.status(400).send({ status: 'error', error: 'Please provide your password' });
+    }
+    if (!Utils.validateEmail(req.body.email)) {
+      return res
+        .status(400)
+        .send({ status: 'error', error: 'Please enter a valid email address.' });
+    }
+
+    const loginQuery = 'SELECT * FROM users WHERE email = $1';
+
+    try {
+      // Check if the user really exists
+      const { rows } = await db.query(loginQuery, [req.body.email]);
+      if (!rows[0]) {
+        return res
+          .status(400)
+          .send({ status: 'error', error: 'These credentials could not be found in our records.' });
+      }
+      if (!Utils.comparePassword(rows[0].password, req.body.password)) {
+        return res.status(400).send({ status: 'error', error: 'These credentials do not match.' });
+      }
+      return res.status(200).send({ status: 'success', data: rows[0] });
+    } catch (error) {
+      console.log(error);
+      return res.status(400).send({ status: 'error', error: { error } });
+    }
   }
 };
 

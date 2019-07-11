@@ -37,7 +37,7 @@ app.get('/', (request, response) => {
 });
 
 app.post('/api/v1/auth/signup', User.create);
-// app.post('/api/v1/auth/signin', User.login);
+app.post('/api/v1/auth/signin', User.login);
 
 const server = app.listen(3000, () => {
   console.log('app running on port ', 3000);
