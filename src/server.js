@@ -16,7 +16,21 @@ const swaggerDefinition = {
     description: 'This is my Wayfarer project REST API for Andela Blended learning' // short description of the app
   },
   host: 'localhost:3000', // the host or url of the app
-  basePath: '/api/v1/' // the basepath of your endpoint
+  basePath: '/api/v1/', // the basepath of your endpoint
+  tags: [
+    {
+      name: 'User',
+      description: 'About user cretion and login'
+    },
+    {
+      name: 'Trips',
+      description: 'Creating and viewing of trips'
+    },
+    {
+      name: 'Bookings',
+      description: 'Booking and cancellation of bookings by user'
+    }
+  ]
 };
 
 // options for the swagger docs
