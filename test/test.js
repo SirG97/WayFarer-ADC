@@ -12,9 +12,6 @@ before(done => {
   db.query(deleteQuery).then(() => {
     console.log('table dropped successfully');
   });
-  // db.query(createQuery).then(() => {
-  //   console.log('table created successfully');
-  // });
   done();
 });
 
