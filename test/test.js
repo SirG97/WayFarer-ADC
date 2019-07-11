@@ -1,10 +1,22 @@
 /* eslint-disable prefer-destructuring */
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import db from '../src/models/userModel';
 import server from '../src/server';
 
 const expect = chai.expect;
 chai.use(chaiHttp);
+
+before(done => {
+  const deleteQuery = 'DELETE FROM users';
+  db.query(deleteQuery).then(() => {
+    console.log('table dropped successfully');
+  });
+  // db.query(createQuery).then(() => {
+  //   console.log('table created successfully');
+  // });
+  done();
+});
 
 describe('/POST create new user', () => {
   it('it should create a new user', done => {
@@ -47,7 +59,7 @@ describe('/POST create new user', () => {
 describe('/POST login a user', () => {
   it('it should login a user', done => {
     const user = {
-      email: 'chinedisco@gmail.com',
+      email: 'hinisco@gmail.com',
       password: 'randompassword'
     };
     chai
