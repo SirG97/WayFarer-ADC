@@ -6,8 +6,8 @@ services:
   - postgresql
 
 before_script:
-  - cp database.yml.travis database.yml 
-  - psql -c 'create database wayfarer;' -U postgres
-  -c "create user wayfarer WITH PASSWORD 'rrwcscrz1';" -U postgres
+  - psql -c "create database wayfarer;" -U postgres
+  - psql -c "create user wayfarer WITH PASSWORD 'rrwcscrz1';" -U postgres
+  - psql -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO wayfarer;
   
 after_success: coveralls
