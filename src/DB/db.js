@@ -38,7 +38,8 @@ const createTables = () => {
         password VARCHAR(128) NOT NULL,
         is_admin BOOLEAN,
         created_date TIMESTAMP,
-        modified_date TIMESTAMP
+        modified_date TIMESTAMP,
+        UNIQUE (email)
       )`;
 
   pool
