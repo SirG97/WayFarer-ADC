@@ -6,7 +6,8 @@ services:
   - postgresql
 
 before_script:
-  - psql -c 'create database wayfarer;' -U wayfarer
-  - psql -c "create user wayfarer WITH PASSWORD 'rrwcscrz1';" -U wayfarer
+  - cp config/database.yml.travis config/database.yml 
+  - psql -c 'create database wayfarer;' -U postgres
+  # - psql -c "create user wayfarer WITH PASSWORD 'rrwcscrz1';" -U postgres
   
 after_success: coveralls
