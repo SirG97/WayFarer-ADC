@@ -8,6 +8,6 @@ services:
 before_script:
   - psql -c "create database wayfarer;" -U postgres
   - psql -c "create user wayfarer WITH PASSWORD 'rrwcscrz1';" -U postgres
-  - psql -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO wayfarer;
+  - psql -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO wayfarer"
   
 after_success: coveralls
