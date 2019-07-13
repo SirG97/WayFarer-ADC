@@ -35,7 +35,7 @@ const Utils = {
         userId: id
       },
       process.env.SECRET,
-      { expiresIn: 1 }
+      { expiresIn: 60 * 10 }
     );
     return token;
   }
