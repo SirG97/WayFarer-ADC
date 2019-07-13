@@ -49,7 +49,8 @@ const User = {
 
     try {
       const { rows } = await db.query(createQuery, values);
-      return res.status(201).send({ status: 'success', data: rows[0] });
+      const token = Utils.generateToken(rows[0].id);
+      return res.status(201).send({ status: 'success', token, data: rows[0] });
     } catch (error) {
       if (error.routine === '_bt_check_unique') {
         return res
@@ -89,10 +90,13 @@ const User = {
           .status(400)
           .send({ status: 'error', error: 'These credentials could not be found in our records.' });
       }
+
       if (!Utils.comparePassword(rows[0].password, req.body.password)) {
         return res.status(400).send({ status: 'error', error: 'These credentials do not match.' });
       }
-      return res.status(200).send({ status: 'success', data: rows[0] });
+
+      const token = Utils.generateToken(rows[0].id);
+      return res.status(200).send({ status: 'success', token, data: rows[0] });
     } catch (error) {
       console.log(error);
       return res.status(400).send({ status: 'error', error: { error } });
