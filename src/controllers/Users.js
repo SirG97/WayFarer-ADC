@@ -1,5 +1,5 @@
 import moment from 'moment';
-import uuidv4 from 'uuid/v4';
+// import uuidv4 from 'uuid/v4';
 import db from '../models/userModel';
 import Utils from './Utils';
 
@@ -8,7 +8,7 @@ const User = {
    * Create A User
    * @param {object} req
    * @param {object} res
-   * @returns {object} reflection object
+   * @returns {object} user object
    */
   async create(req, res) {
     if (!req.body.first_name) {
@@ -37,7 +37,7 @@ const User = {
       VALUES($1, $2, $3, $4, $5, $6, $7, $8)
       returning *`;
     const values = [
-      uuidv4(),
+      1,
       req.body.first_name,
       req.body.last_name,
       req.body.email,
