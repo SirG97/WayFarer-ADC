@@ -3,6 +3,7 @@ import '@babel/polyfill';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import User from './controllers/Users';
+import Auth from './middleware/Auth';
 
 const app = express();
 
@@ -51,7 +52,7 @@ app.get('/', (request, response) => {
 });
 
 app.post('/api/v1/auth/signup', User.create);
-app.post('/api/v1/auth/signin', User.login);
+app.post('/api/v1/auth/signin', Auth.verifyToken, User.login);
 
 const server = app.listen(3000, () => {
   console.log('app running on port ', 3000);
