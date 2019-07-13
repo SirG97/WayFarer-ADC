@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 const Utils = {
   /**
@@ -26,6 +27,17 @@ const Utils = {
   validateEmail(email) {
     const re = /\S+@\S+\.\S+/;
     return re.test(email);
+  },
+
+  generateToken(id) {
+    const token = jwt.sign(
+      {
+        userId: id
+      },
+      process.env.SECRET,
+      { expiresIn: 60 * 10 }
+    );
+    return token;
   }
 };
 
