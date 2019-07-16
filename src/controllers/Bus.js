@@ -1,7 +1,6 @@
 import moment from 'moment';
-// import uuidv4 from 'uuid/v4';
+import uuidv4 from 'uuid/v4';
 import db from '../models/userModel';
-import Utils from './Utils';
 
 const Bus = {
   /**
@@ -10,7 +9,8 @@ const Bus = {
    * @param {object} res
    * @returns {object} bus object
    */
-  async createbus(req, res) {
+  async create_bus(req, res) {
+    console.log(req.body);
     if (!req.body.number_plate) {
       return res.status(400).send({ status: 'error', error: 'Number plate is required' });
     }
@@ -26,20 +26,26 @@ const Bus = {
     if (!req.body.capacity) {
       return res.status(400).send({ status: 'error', error: 'Capacity is required' });
     }
-    if (req.body.status == null || undefined) {
-      return res.status(400).send({ status: 'error', error: 'Bus status should be true or false' });
+    if (!req.body.available_seat) {
+      return res.status(400).send({ status: 'error', error: 'Available seat is required' });
+    }
+    if (req.body.status === null || undefined) {
+      req.body.status = true;
     }
 
     const createBusQuery = `INSERT INTO
-      buses(number_plate, manufacturer, model, year, capacity, created_date, modified_date)
-      VALUES($1, $2, $3, $4, $5, $6, $7)
+      buses(id, number_plate, manufacturer, model, year, capacity,available_seat, status, created_date, modified_date)
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       returning *`;
     const values = [
+      uuidv4(),
       req.body.number_plate,
       req.body.manufacturer,
       req.body.model,
       req.body.year,
       req.body.capacity,
+      req.body.available_seat,
+      req.body.status,
       moment(new Date()),
       moment(new Date())
     ];
@@ -55,43 +61,73 @@ const Bus = {
       return res.status(400).send(error);
     }
   },
+
+  /**
+   * Get single bus
+   * @param {object} req
+   * @param {object} res
+   * @returns {object} bus object
+   */
+  async get_single_bus(req, res) {
+    const text = 'SELECT * FROM bus WHERE id = $1';
+    try {
+      const { rows } = await db.query(text, [req.params.id]);
+      if (!rows[0]) {
+        return res.status(404).send({ message: 'bus not found' });
+      }
+      return res.status(200).send(rows[0]);
+    } catch (error) {
+      return res.status(400).send(error);
+    }
+  },
+  /**
+   * Get all bus
+   * @param {object} req
+   * @param {object} res
+   * @returns {object} trip object
+   */
+  async get_all_bus(req, res) {
+    const text = 'SELECT * FROM buses';
+    try {
+      const { rows, rowCount } = await db.query(text);
+
+      return res.status(200).send({ status: 'success', rowCount, rows });
+    } catch (error) {
+      return res.status(400).send(error);
+    }
+  },
   /**
    * Update bus info
    * @param {object} req
    * @param {object} res
-   * @returns {object} user object
+   * @returns {object} bus object
    */
-  async update(req, res) {
-    // Validate the data
-    if (!req.body.email) {
-      return res.status(400).send({ status: 'error', error: 'Come on pal! provide you email' });
-    }
-    if (!req.body.password) {
-      return res.status(400).send({ status: 'error', error: 'Please provide your password' });
-    }
-    if (!Utils.validateEmail(req.body.email)) {
-      return res
-        .status(400)
-        .send({ status: 'error', error: 'Please enter a valid email address.' });
-    }
-
-    const updateQuery = 'SELECT * FROM users WHERE email = $1';
-
+  async update_bus(req, res) {
+    const findbus = `SELECT * FROM buses WHERE number_plate=$1`;
+    const updatebus = `UPDATE buses SET capacity=$1, available_seat=$2 status=$3 WHERE number_plate=$4 returning *`;
     try {
       // Check if the user really exists
-      const { rows } = await db.query(updateQuery, [req.body.number_plate]);
+      const { rows } = await db.query(findbus, [req.params.number_plate]);
       if (!rows[0]) {
-        return res
-          .status(400)
-          .send({ status: 'error', error: 'These credentials could not be found in our records.' });
+        return res.status(400).send({ status: 'error', error: 'This bus does not exist.' });
+      }
+      if (rows[0].status === false) {
+        return res.status(400).send({ status: 'error', error: 'This bus is no longer active.' });
       }
 
-      if (!Utils.comparePassword(rows[0].password, req.body.password)) {
-        return res.status(400).send({ status: 'error', error: 'These credentials do not match.' });
+      if (req.body.status === undefined || typeof req.body.status !== 'boolean') {
+        req.body.status = rows[0].status;
       }
 
-      const token = Utils.generateToken(rows[0].id);
-      return res.status(200).send({ status: 'success', token, data: rows[0] });
+      // TODO: check if available seat is zero
+      const values = [
+        req.body.capacity || rows[0].capacity,
+        req.body.available_seat || rows[0].available_seat,
+        req.body.status,
+        req.params.number_plate
+      ];
+      const response = await db.query(updatebus, values);
+      return res.status(200).send({ status: 'success', data: response.rows[0] });
     } catch (error) {
       console.log(error);
       return res.status(400).send({ status: 'error', error: { error } });

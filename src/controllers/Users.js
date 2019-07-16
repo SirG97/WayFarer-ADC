@@ -1,5 +1,5 @@
 import moment from 'moment';
-// import uuidv4 from 'uuid/v4';
+import uuidv4 from 'uuid/v4';
 import db from '../models/userModel';
 import Utils from './Utils';
 
@@ -37,7 +37,7 @@ const User = {
       VALUES($1, $2, $3, $4, $5, $6, $7, $8)
       returning *`;
     const values = [
-      1,
+      uuidv4(),
       req.body.first_name,
       req.body.last_name,
       req.body.email,
@@ -49,7 +49,7 @@ const User = {
 
     try {
       const { rows } = await db.query(createQuery, values);
-      const token = Utils.generateToken(rows[0].id);
+      const token = Utils.generateToken(rows[0].id, rows[0].is_admin);
       return res.status(201).send({ status: 'success', token, data: rows[0] });
     } catch (error) {
       if (error.routine === '_bt_check_unique') {
@@ -95,7 +95,7 @@ const User = {
         return res.status(400).send({ status: 'error', error: 'These credentials do not match.' });
       }
 
-      const token = Utils.generateToken(rows[0].id);
+      const token = Utils.generateToken(rows[0].id, rows[0].is_admin);
       return res.status(200).send({ status: 'success', token, data: rows[0] });
     } catch (error) {
       console.log(error);

@@ -3,6 +3,8 @@ import '@babel/polyfill';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import User from './controllers/Users';
+import Bus from './controllers/Bus';
+import Trips from './controllers/Trips';
 import Auth from './middleware/Auth';
 
 const app = express();
@@ -54,8 +56,19 @@ app.get('/', (request, response) => {
 app.post('/api/v1/auth/signup', User.create);
 app.post('/api/v1/auth/signin', Auth.verifyToken, User.login);
 
-const server = app.listen(3000, () => {
-  console.log('app running on port ', 3000);
+app.post('/api/v1/bus', Auth.verifyToken, Bus.create_bus);
+app.get('/api/v1/bus', Auth.verifyToken, Bus.get_all_bus);
+app.get('/api/v1/bus:number_plate', Auth.verifyToken, Bus.get_single_bus);
+app.put('/api/v1/bus/:number_plate', Bus.update_bus);
+
+app.post('/api/v1/trips', Auth.verifyToken, Trips.create_trip);
+app.get('/api/v1/trips', Auth.verifyToken, Trips.get_all_trips);
+app.get('/api/v1/trips/:id', Auth.verifyToken, Trips.get_single_trip);
+app.put('/api/v1/trips/:id', Auth.verifyToken, Trips.update_trip);
+app.delete('/api/v1/trips/:id', Auth.verifyToken, Trips.delete_trip);
+const port = process.env.port || 3000;
+const server = app.listen(port, () => {
+  console.log('app running on port ', port);
 });
 
 module.exports = server;
