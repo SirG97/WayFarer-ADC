@@ -2,7 +2,7 @@
   "name": "wayfare_adc",
   "version": "1.0.0",
   "description": "WayFarer is a public bus transportation booking server API, an Andela developer challenge for Andela Blended Learning.",
-  "main": "index.js",
+  "main": "./dist/.js",
   "scripts": {
     "test": "mocha --require @babel/register",
     "start": "nodemon --exec babel-node ./src/server.js",
@@ -15,7 +15,7 @@
     "droptrip": "node ./src/DB/db dropTripTable",
     "createall": "node ./src/DB/db createAllTables",
     "dropall": "node ./src/DB/db dropAllTables",
-    "serve": "node ./dist/server.js",
+    "serve": "npm run build && node ./dist/server.js",
     "dev-start": "",
     "generate-lcov": "nyc report --reporter=text-lcov > lcov.info",
     "coveralls-coverage": "coveralls < lcov.info",
