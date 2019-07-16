@@ -11,13 +11,13 @@ const JwtAuth = {
    */
   // eslint-disable-next-line consistent-return
   async verifyToken(req, res, next) {
-    const token = req.headers['x-access-token'].split(' ')[1];
-    if (!token) {
+    const tokenheader = req.headers['x-access-token'];
+    if (!tokenheader) {
       return res
         .status(400)
         .send({ status: 'error', error: 'Token is not provided', message: req.headers });
     }
-
+    const [, token] = tokenheader.split(' ');
     try {
       const decoded = await jwt.verify(token, process.env.SECRET);
       const text = 'SELECT * FROM users WHERE id = $1';
@@ -28,6 +28,7 @@ const JwtAuth = {
           .send({ status: 'error', error: 'The token you provided is invalid' });
       }
       req.user = { id: decoded.userId };
+      req.admin = { admin: decoded.isAdmin };
       next();
     } catch (error) {
       return res.status(400).send({ status: 'error', error });

@@ -8,7 +8,7 @@ const User = {
    * Create A User
    * @param {object} req
    * @param {object} res
-   * @returns {object} reflection object
+   * @returns {object} user object
    */
   async create(req, res) {
     if (!req.body.first_name) {
@@ -49,7 +49,7 @@ const User = {
 
     try {
       const { rows } = await db.query(createQuery, values);
-      const token = Utils.generateToken(rows[0].id);
+      const token = Utils.generateToken(rows[0].id, rows[0].is_admin);
       return res.status(201).send({ status: 'success', token, data: rows[0] });
     } catch (error) {
       if (error.routine === '_bt_check_unique') {
@@ -95,7 +95,7 @@ const User = {
         return res.status(400).send({ status: 'error', error: 'These credentials do not match.' });
       }
 
-      const token = Utils.generateToken(rows[0].id);
+      const token = Utils.generateToken(rows[0].id, rows[0].is_admin);
       return res.status(200).send({ status: 'success', token, data: rows[0] });
     } catch (error) {
       console.log(error);
