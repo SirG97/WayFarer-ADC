@@ -3,7 +3,7 @@ import '@babel/polyfill';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import User from './controllers/Users';
-import Bus from  './controllers/Bus';
+import Bus from './controllers/Bus';
 import Trips from './controllers/Trips';
 import Auth from './middleware/Auth';
 
