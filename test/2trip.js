@@ -1,8 +1,5 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable prefer-destructuring */
-require 'coveralls';
-Coveralls.wear!
-
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import db from '../src/models/userModel';
