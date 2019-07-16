@@ -29,13 +29,14 @@ const Utils = {
     return re.test(email);
   },
 
-  generateToken(id) {
+  generateToken(id, admin) {
     const token = jwt.sign(
       {
-        userId: id
+        userId: id,
+        isAdmin: admin
       },
       process.env.SECRET,
-      { expiresIn: 60 * 10 }
+      { expiresIn: '7d' }
     );
     return token;
   }

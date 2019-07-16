@@ -8,5 +8,7 @@ services:
 before_script:
   - psql -c "create database wayfarer;" -U postgres
   - psql -c "create user wayfarer WITH PASSWORD 'rrwcscrz1';" -U postgres
-  - "npm run create" 
+  - "npm run create"
+  - "npm run bus"
+  - "npm run trip"
 after_success: coveralls
