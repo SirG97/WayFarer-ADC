@@ -5,7 +5,7 @@
   "main": "./dist/.js",
   "scripts": {
     "test": "mocha --require @babel/register",
-    "start": "nodemon --exec babel-node ./src/server.js",
+    "start": "npm run build && node ./dist/server.js",
     "build": "babel ./src --out-dir dist",
     "create": "node ./src/DB/db createUsersTables",
     "bus": "node ./src/DB/db createBusTable",
@@ -15,8 +15,8 @@
     "droptrip": "node ./src/DB/db dropTripTable",
     "createall": "node ./src/DB/db createAllTables",
     "dropall": "node ./src/DB/db dropAllTables",
-    "serve": "npm run build && node ./dist/server.js",
-    "dev-start": "",
+    "serve": "",
+    "dev-start": "nodemon --exec babel-node ./src/server.js",
     "generate-lcov": "nyc report --reporter=text-lcov > lcov.info",
     "coveralls-coverage": "coveralls < lcov.info",
     "coverage": "nyc npm test && npm run generate-lcov && npm run coveralls-coverage"

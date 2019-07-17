@@ -27,7 +27,6 @@ describe('Trip functionalities', () => {
         expect(res).to.have.status(201);
         expect(res.body).to.have.status('success');
         expect(res.body.token).to.exist;
-        console.log(`token after inserting user for test is ${token}`);
         token = res.body.token;
         done();
       });
@@ -52,6 +51,7 @@ describe('Trip functionalities', () => {
   });
   describe('/POST create a new trip', () => {
     let busId;
+    let tripId;
     beforeEach(done => {
       // create a new bus first
       const bus = {
@@ -71,6 +71,7 @@ describe('Trip functionalities', () => {
         .end((err, res) => {
           expect(res).to.have.status(201);
           expect(res.body).to.have.status('success');
+          console.log('This is the response of bus creation');
           console.log(res.body || err);
           busId = res.body.data.number_plate;
           done();
@@ -94,11 +95,44 @@ describe('Trip functionalities', () => {
         .set('x-access-token', `Bearer ${token}`)
         .send(trip)
         .end((err, res) => {
-          console.log(res.body || err);
+          // console.log(res.body || err);
           expect(res).to.have.status(201);
           expect(res.body).to.have.status('success');
+          tripId = res.body.data.id;
+          console.log(tripId);
           done();
         });
     });
+
+    // it('it should get a single trip', () => {
+    //   chai
+    //     .request(server)
+    //     .get(`/api/vi/trips/${tripId}`)
+    //     .set('x-access-token', `Bearer ${token}`)
+    //     .end((err, res) => {
+    //       expect(res).to.have.status(200);
+    //       expect(res.body).to.have.status('success');
+    //     });
+    // });
+    // it('it should get all trips', () => {
+    //   chai
+    //     .request(server)
+    //     .get(`/api/vi/trips/`)
+    //     .set('x-access-token', `Bearer ${token}`)
+    //     .expect(200)
+    //     .end((err, res) => {
+    //       expect(res.body).to.have.status('success');
+    //     });
+    // });
+    // it('it should delete a trip', () => {
+    //   chai
+    //     .request(server)
+    //     .delete(`/api/vi/trips/${tripId}`)
+    //     .set('x-access-token', `Bearer ${token}`)
+    //     .expect(204)
+    //     .end((err, res) => {
+    //       expect(res.body).to.have.status('success');
+    //     });
+    // });
   });
 });
