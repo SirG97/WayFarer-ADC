@@ -11,5 +11,4 @@ before_script:
   - "npm run create"
   - "npm run bus"
   - "npm run trip"
-  - "npm run coverage"
 after_success: 'npm run coverage'
