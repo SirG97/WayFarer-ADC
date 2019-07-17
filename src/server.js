@@ -66,7 +66,7 @@ app.get('/api/v1/trips', Auth.verifyToken, Trips.get_all_trips);
 app.get('/api/v1/trips/:id', Auth.verifyToken, Trips.get_single_trip);
 app.put('/api/v1/trips/:id', Auth.verifyToken, Trips.update_trip);
 app.delete('/api/v1/trips/:id', Auth.verifyToken, Trips.delete_trip);
-const port = process.env.port || 3000;
+const port = process.env.PORT || 3000;
 const server = app.listen(port, () => {
   console.log('app running on port ', port);
 });
