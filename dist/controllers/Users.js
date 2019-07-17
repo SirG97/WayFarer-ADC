@@ -24,13 +24,13 @@ var User = {
    * Create A User
    * @param {object} req
    * @param {object} res
-   * @returns {object} reflection object
+   * @returns {object} user object
    */
   create: function () {
     var _create = _asyncToGenerator(
     /*#__PURE__*/
     regeneratorRuntime.mark(function _callee(req, res) {
-      var hashedPassword, createQuery, values, _ref, rows;
+      var hashedPassword, createQuery, values, _ref, rows, token;
 
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
@@ -112,17 +112,19 @@ var User = {
             case 18:
               _ref = _context.sent;
               rows = _ref.rows;
+              token = _Utils["default"].generateToken(rows[0].id, rows[0].is_admin);
               return _context.abrupt("return", res.status(201).send({
                 status: 'success',
+                token: token,
                 data: rows[0]
               }));
 
-            case 23:
-              _context.prev = 23;
+            case 24:
+              _context.prev = 24;
               _context.t0 = _context["catch"](15);
 
               if (!(_context.t0.routine === '_bt_check_unique')) {
-                _context.next = 27;
+                _context.next = 28;
                 break;
               }
 
@@ -131,15 +133,15 @@ var User = {
                 error: 'User with that email already exist'
               }));
 
-            case 27:
+            case 28:
               return _context.abrupt("return", res.status(400).send(_context.t0));
 
-            case 28:
+            case 29:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[15, 23]]);
+      }, _callee, null, [[15, 24]]);
     }));
 
     function create(_x, _x2) {
@@ -147,6 +149,119 @@ var User = {
     }
 
     return create;
+  }(),
+
+  /**
+   * Login
+   * @param {object} req
+   * @param {object} res
+   * @returns {object} user object
+   */
+  login: function () {
+    var _login = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee2(req, res) {
+      var loginQuery, _ref2, rows, token;
+
+      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              if (req.body.email) {
+                _context2.next = 2;
+                break;
+              }
+
+              return _context2.abrupt("return", res.status(400).send({
+                status: 'error',
+                error: 'Come on pal! provide you email'
+              }));
+
+            case 2:
+              if (req.body.password) {
+                _context2.next = 4;
+                break;
+              }
+
+              return _context2.abrupt("return", res.status(400).send({
+                status: 'error',
+                error: 'Please provide your password'
+              }));
+
+            case 4:
+              if (_Utils["default"].validateEmail(req.body.email)) {
+                _context2.next = 6;
+                break;
+              }
+
+              return _context2.abrupt("return", res.status(400).send({
+                status: 'error',
+                error: 'Please enter a valid email address.'
+              }));
+
+            case 6:
+              loginQuery = 'SELECT * FROM users WHERE email = $1';
+              _context2.prev = 7;
+              _context2.next = 10;
+              return _userModel["default"].query(loginQuery, [req.body.email]);
+
+            case 10:
+              _ref2 = _context2.sent;
+              rows = _ref2.rows;
+
+              if (rows[0]) {
+                _context2.next = 14;
+                break;
+              }
+
+              return _context2.abrupt("return", res.status(400).send({
+                status: 'error',
+                error: 'These credentials could not be found in our records.'
+              }));
+
+            case 14:
+              if (_Utils["default"].comparePassword(rows[0].password, req.body.password)) {
+                _context2.next = 16;
+                break;
+              }
+
+              return _context2.abrupt("return", res.status(400).send({
+                status: 'error',
+                error: 'These credentials do not match.'
+              }));
+
+            case 16:
+              token = _Utils["default"].generateToken(rows[0].id, rows[0].is_admin);
+              return _context2.abrupt("return", res.status(200).send({
+                status: 'success',
+                token: token,
+                data: rows[0]
+              }));
+
+            case 20:
+              _context2.prev = 20;
+              _context2.t0 = _context2["catch"](7);
+              console.log(_context2.t0);
+              return _context2.abrupt("return", res.status(400).send({
+                status: 'error',
+                error: {
+                  error: _context2.t0
+                }
+              }));
+
+            case 24:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2, null, [[7, 20]]);
+    }));
+
+    function login(_x3, _x4) {
+      return _login.apply(this, arguments);
+    }
+
+    return login;
   }()
 };
 var _default = User;

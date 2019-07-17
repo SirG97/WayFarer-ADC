@@ -7,6 +7,8 @@ exports["default"] = void 0;
 
 var _bcrypt = _interopRequireDefault(require("bcrypt"));
 
+var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 var Utils = {
@@ -37,6 +39,16 @@ var Utils = {
   validateEmail: function validateEmail(email) {
     var re = /\S+@\S+\.\S+/;
     return re.test(email);
+  },
+  generateToken: function generateToken(id, admin) {
+    var token = _jsonwebtoken["default"].sign({
+      userId: id,
+      isAdmin: admin
+    }, process.env.SECRET, {
+      expiresIn: '7d'
+    });
+
+    return token;
   }
 };
 var _default = Utils;
