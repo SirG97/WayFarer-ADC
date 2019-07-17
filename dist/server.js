@@ -70,7 +70,7 @@ app.get('/api/v1/trips', _Auth["default"].verifyToken, _Trips["default"].get_all
 app.get('/api/v1/trips/:id', _Auth["default"].verifyToken, _Trips["default"].get_single_trip);
 app.put('/api/v1/trips/:id', _Auth["default"].verifyToken, _Trips["default"].update_trip);
 app["delete"]('/api/v1/trips/:id', _Auth["default"].verifyToken, _Trips["default"].delete_trip);
-var port = process.env.port || 3000;
+var port = process.env.PORT || 3000;
 var server = app.listen(port, function () {
   console.log('app running on port ', port);
 });
