@@ -45,6 +45,7 @@ describe('Trip functionalities', () => {
         expect(res).to.have.status(201);
         expect(res.body).to.have.status('success');
         token = res.body.token;
+        console.log('user created');
       })
       .then(() => {
         const bus = {
@@ -63,6 +64,7 @@ describe('Trip functionalities', () => {
           .send(bus)
           .then(res => {
             busId = res.body.data.number_plate;
+            console.log('bus created');
           })
           .then(() => {
             console.log('creating trip ....');
@@ -82,6 +84,7 @@ describe('Trip functionalities', () => {
               .send(tripinit)
               .then(res => {
                 tripId = res.body.data.id;
+                console.log('trip created');
               });
           });
       })
