@@ -64,7 +64,7 @@ const Trips = {
       if (!rows[0]) {
         return res.status(404).send({ status: 'error', message: 'trip not found' });
       }
-      return res.status(200).send({ status: 'error', data: rows[0] });
+      return res.status(200).send({ status: 'success', data: rows[0] });
     } catch (error) {
       return res.status(400).send(error);
     }
@@ -129,7 +129,7 @@ const Trips = {
       if (!rows[0]) {
         return res.status(404).send({ status: 'success', message: 'Sorry trip not found' });
       }
-      return res.status(204).send({ status: 'success', message: 'deleted' });
+      return res.status(200).send({ status: 'success', message: 'Trip deleted successfully' });
     } catch (error) {
       return res.status(400).send(error);
     }

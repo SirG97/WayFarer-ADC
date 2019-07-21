@@ -5,7 +5,7 @@
   "main": "./dist/server.js",
   "scripts": {
     "test": "mocha --require @babel/register",
-    "start": "nodemon --exec babel-node ./src/server.js",
+    "start": "node ./dist/server.js",
     "build": "babel ./src --out-dir dist",
     "create": "node ./src/DB/db createUsersTables",
     "bus": "node ./src/DB/db createBusTable",
@@ -15,8 +15,11 @@
     "droptrip": "node ./src/DB/db dropTripTable",
     "createall": "node ./src/DB/db createAllTables",
     "dropall": "node ./src/DB/db dropAllTables",
-    "serve": "node ./dist/server.js",
-    "dev-start": ""
+    "serve": "",
+    "dev-start": "nodemon --exec babel-node ./src/server.js",
+    "generate-lcov": "nyc report --reporter=text-lcov > lcov.info",
+    "coveralls-coverage": "coveralls < lcov.info",
+    "coverage": "nyc npm test && npm run generate-lcov && npm run coveralls-coverage"
   },
   "repository": {
     "type": "git",
@@ -61,6 +64,7 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-react": "^7.14.2",
+    "istanbul": "^0.4.5",
     "mocha": "^6.1.4",
     "nodemon": "^1.19.1",
     "nyc": "^14.1.1",

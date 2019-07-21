@@ -8,97 +8,157 @@ import server from '../src/server';
 const expect = chai.expect;
 chai.use(chaiHttp);
 
+before(done => {
+  const deletetrip = 'DELETE FROM trips';
+  const deletebus = 'DELETE FROM buses';
+  const deleteuser = 'DELETE FROM users';
+
+  db.query(deletetrip).then(() => {
+    console.log('trip table dropped successfully');
+  });
+  db.query(deletebus).then(() => {
+    console.log('bus table dropped successfully');
+  });
+  db.query(deleteuser).then(() => {
+    console.log('user table dropped successfully');
+  });
+  done();
+});
+
 describe('Trip functionalities', () => {
   let token;
-  before(done => {
+  let busId;
+  let tripId;
+  before(async () => {
     const user = {
       first_name: 'Chinedu',
       last_name: 'Paul',
-      email: 'baboronuka@gmail.com',
+      email: 'borkisoto@gmail.com',
       password: 'randompassword',
       is_admin: true
     };
-    chai
+    await chai
       .request(server)
       .post('/api/v1/auth/signup')
       .send(user)
+      .then(res => {
+        expect(res).to.have.status(201);
+        expect(res.body).to.have.status('success');
+        token = res.body.token;
+        console.log('user created');
+      });
+
+    const bus = {
+      number_plate: '2T6GKMhgAjfg9k',
+      manufacturer: 'Chevrolette',
+      model: 'Mustang',
+      year: '2018',
+      capacity: 20,
+      available_seat: 10,
+      status: 1
+    };
+    await chai
+      .request(server)
+      .post('/api/v1/bus')
+      .set('x-access-token', `Bearer ${token}`)
+      .send(bus)
+      .then(res => {
+        busId = res.body.data.number_plate;
+        console.log('bus created');
+      });
+
+    console.log('creating trip ....');
+    const tripinit = {
+      bus_id: busId,
+      origin: 'Aba',
+      destination: 'Britain',
+      fare: 78.25,
+      available_seat: 85,
+      trip_date: '2019-09-09',
+      status: true
+    };
+    await chai
+      .request(server)
+      .post('/api/v1/trips')
+      .set('x-access-token', `Bearer ${token}`)
+      .send(tripinit)
+      .then(res => {
+        tripId = res.body.data.id;
+        console.log('trip created');
+      });
+  });
+
+  it('it should create a new trip', done => {
+    console.log('92 bus Id is', busId);
+    const trip = {
+      bus_id: busId,
+      origin: 'Spain',
+      destination: 'Germany',
+      fare: 30.25,
+      available_seat: 30,
+      trip_date: '2019-09-09',
+      status: true
+    };
+    chai
+      .request(server)
+      .post('/api/v1/trips')
+      .set('x-access-token', `Bearer ${token}`)
+      .send(trip)
       .end((err, res) => {
         console.log(res.body);
         expect(res).to.have.status(201);
         expect(res.body).to.have.status('success');
-        expect(res.body.token).to.exist;
-        console.log(`token after inserting user for test is ${token}`);
-        token = res.body.token;
+        expect(res.body.data).to.have.property('id');
+        expect(res.body.data)
+          .to.have.property('bus_id')
+          .to.equal('2T6GKMhgAjfg9k');
+        expect(res.body.data)
+          .to.have.property('bus_id')
+          .to.equal('2T6GKMhgAjfg9k');
+        expect(res.body.data)
+          .to.have.property('destination')
+          .to.equal('Germany');
         done();
       });
-    console.log('user in trip created successfully to test trip');
   });
-
-  after(done => {
-    const deletetrip = 'DELETE FROM trips';
-    const deletebus = 'DELETE FROM buses';
-    const deleteuser = 'DELETE FROM users';
-
-    db.query(deletetrip).then(() => {
-      console.log('trip table dropped successfully');
-    });
-    db.query(deletebus).then(() => {
-      console.log('bus table dropped successfully');
-    });
-    db.query(deleteuser).then(() => {
-      console.log('user table dropped successfully');
-    });
+  it('it should get all trips', done => {
+    chai
+      .request(server)
+      .get(`/api/v1/trips`)
+      .set('x-access-token', `Bearer ${token}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body).to.have.status('success');
+      });
     done();
   });
-  describe('/POST create a new trip', () => {
-    let busId;
-    beforeEach(done => {
-      // create a new bus first
-      const bus = {
-        number_plate: '2TF6GKMhgNHDA6',
-        manufacturer: 'Chevrolette',
-        model: 'Mustang',
-        year: '2018',
-        capacity: 20,
-        available_seat: 10,
-        status: 1
-      };
+  it('it should get a single trip', () => {
+    const trip = tripId;
+    chai
+      .request(server)
+      .get(`/api/v1/trips/${trip}`)
+      .set('x-access-token', `Bearer ${token}`)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body).to.have.status('success');
+      });
+  });
+  it('it should delete a trip', () => {
+    const trip = tripId;
+    setTimeout(() => {
       chai
         .request(server)
-        .post('/api/v1/bus')
+        .delete(`/api/v1/trips/${trip}`)
         .set('x-access-token', `Bearer ${token}`)
-        .send(bus)
         .end((err, res) => {
-          expect(res).to.have.status(201);
-          expect(res.body).to.have.status('success');
-          console.log(res.body || err);
-          busId = res.body.data.number_plate;
-          done();
+          expect(res).to.have.status(200);
+          expect(res.body)
+            .to.have.property('status')
+            .to.equal('success');
+          expect(res.body)
+            .to.have.property('message')
+            .to.equal('Trip deleted successfully');
         });
-    });
-
-    it('it should create a new trip', done => {
-      const trip = {
-        bus_id: busId,
-        origin: 'Spain',
-        destination: 'Germany',
-        fare: 30.25,
-        available_seat: 30,
-        trip_date: '2019-09-09',
-        status: true
-      };
-      console.log(`This is the ${busId} but the bus is fucking up.`);
-      chai
-        .request(server)
-        .post('/api/v1/trips')
-        .set('x-access-token', `Bearer ${token}`)
-        .send(trip)
-        .end((err, res) => {
-          console.log(res.body || err);
-          expect(res).to.have.status(201);
-          expect(res.body).to.have.status('success');
-          done();
-        });
-    });
+    }, 500);
   });
 });
