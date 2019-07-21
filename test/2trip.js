@@ -46,56 +46,52 @@ describe('Trip functionalities', () => {
         expect(res.body).to.have.status('success');
         token = res.body.token;
         console.log('user created');
-      })
-      .then(() => {
-        const bus = {
-          number_plate: '2T6GKMhgAjfg9k',
-          manufacturer: 'Chevrolette',
-          model: 'Mustang',
-          year: '2018',
-          capacity: 20,
-          available_seat: 10,
-          status: 1
-        };
-        chai
-          .request(server)
-          .post('/api/v1/bus')
-          .set('x-access-token', `Bearer ${token}`)
-          .send(bus)
-          .then(res => {
-            busId = res.body.data.number_plate;
-            console.log('bus created');
-          })
-          .then(() => {
-            console.log('creating trip ....');
-            const tripinit = {
-              bus_id: busId,
-              origin: 'Aba',
-              destination: 'Britain',
-              fare: 78.25,
-              available_seat: 85,
-              trip_date: '2019-09-09',
-              status: true
-            };
-            chai
-              .request(server)
-              .post('/api/v1/trips')
-              .set('x-access-token', `Bearer ${token}`)
-              .send(tripinit)
-              .then(res => {
-                tripId = res.body.data.id;
-                console.log('trip created');
-              });
-          });
-      })
-      .catch(error => {
-        console.log(error);
+      });
+
+    const bus = {
+      number_plate: '2T6GKMhgAjfg9k',
+      manufacturer: 'Chevrolette',
+      model: 'Mustang',
+      year: '2018',
+      capacity: 20,
+      available_seat: 10,
+      status: 1
+    };
+    await chai
+      .request(server)
+      .post('/api/v1/bus')
+      .set('x-access-token', `Bearer ${token}`)
+      .send(bus)
+      .then(res => {
+        busId = res.body.data.number_plate;
+        console.log('bus created');
+      });
+
+    console.log('creating trip ....');
+    const tripinit = {
+      bus_id: busId,
+      origin: 'Aba',
+      destination: 'Britain',
+      fare: 78.25,
+      available_seat: 85,
+      trip_date: '2019-09-09',
+      status: true
+    };
+    await chai
+      .request(server)
+      .post('/api/v1/trips')
+      .set('x-access-token', `Bearer ${token}`)
+      .send(tripinit)
+      .then(res => {
+        tripId = res.body.data.id;
+        console.log('trip created');
       });
   });
 
   it('it should create a new trip', done => {
+    console.log('92 bus Id is', busId);
     const trip = {
-      bus_id: '2T6GKMhgAjfg9k',
+      bus_id: busId,
       origin: 'Spain',
       destination: 'Germany',
       fare: 30.25,
@@ -109,7 +105,7 @@ describe('Trip functionalities', () => {
       .set('x-access-token', `Bearer ${token}`)
       .send(trip)
       .end((err, res) => {
-        console.log(res);
+        console.log(res.body);
         expect(res).to.have.status(201);
         expect(res.body).to.have.status('success');
         expect(res.body.data).to.have.property('id');
