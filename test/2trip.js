@@ -29,7 +29,7 @@ describe('Trip functionalities', () => {
   let token;
   let busId;
   let tripId;
-  before(() => {
+  before(async () => {
     const user = {
       first_name: 'Chinedu',
       last_name: 'Paul',
@@ -37,7 +37,7 @@ describe('Trip functionalities', () => {
       password: 'randompassword',
       is_admin: true
     };
-    return chai
+    await chai
       .request(server)
       .post('/api/v1/auth/signup')
       .send(user)
