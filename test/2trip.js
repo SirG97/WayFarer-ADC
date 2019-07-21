@@ -45,12 +45,8 @@ describe('Trip functionalities', () => {
         expect(res).to.have.status(201);
         expect(res.body).to.have.status('success');
         token = res.body.token;
-        console.log('34 user in trip created');
-        console.log(`35 the token inside create is ${token}`);
       })
       .then(() => {
-        console.log(`37 the token outside create is ${token}`);
-        console.log('38 creating bus.....');
         const bus = {
           number_plate: '2T6GKMhgAjfg9k',
           manufacturer: 'Chevrolette',
@@ -67,7 +63,6 @@ describe('Trip functionalities', () => {
           .send(bus)
           .then(res => {
             busId = res.body.data.number_plate;
-            console.log(`61 busId is ${busId}`);
           })
           .then(() => {
             console.log('creating trip ....');
@@ -111,7 +106,6 @@ describe('Trip functionalities', () => {
       .set('x-access-token', `Bearer ${token}`)
       .send(trip)
       .end((err, res) => {
-        console.log('line 102 The bus ID is ', busId);
         expect(res).to.have.status(201);
         expect(res.body).to.have.status('success');
         expect(res.body.data).to.have.property('id');
@@ -124,7 +118,6 @@ describe('Trip functionalities', () => {
         expect(res.body.data)
           .to.have.property('destination')
           .to.equal('Germany');
-        console.log(`118 body of response is `, res.body.data);
         done();
       });
   });
@@ -141,7 +134,6 @@ describe('Trip functionalities', () => {
   });
   it('it should get a single trip', () => {
     const trip = tripId;
-    console.log('trip id in it is ', `${tripId}`);
     chai
       .request(server)
       .get(`/api/v1/trips/${trip}`)
@@ -153,18 +145,20 @@ describe('Trip functionalities', () => {
   });
   it('it should delete a trip', () => {
     const trip = tripId;
-    chai
-      .request(server)
-      .delete(`/api/v1/trips/${trip}`)
-      .set('x-access-token', `Bearer ${token}`)
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body)
-          .to.have.property('status')
-          .to.equal('success');
-        expect(res.body)
-          .to.have.property('message')
-          .to.equal('Trip deleted successfully');
-      });
+    setTimeout(() => {
+      chai
+        .request(server)
+        .delete(`/api/v1/trips/${trip}`)
+        .set('x-access-token', `Bearer ${token}`)
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          expect(res.body)
+            .to.have.property('status')
+            .to.equal('success');
+          expect(res.body)
+            .to.have.property('message')
+            .to.equal('Trip deleted successfully');
+        });
+    }, 500);
   });
 });
