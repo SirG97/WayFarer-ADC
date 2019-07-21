@@ -106,6 +106,7 @@ describe('Trip functionalities', () => {
       .set('x-access-token', `Bearer ${token}`)
       .send(trip)
       .end((err, res) => {
+        console.log(res);
         expect(res).to.have.status(201);
         expect(res.body).to.have.status('success');
         expect(res.body.data).to.have.property('id');
