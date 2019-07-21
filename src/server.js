@@ -8,7 +8,7 @@ import Trips from './controllers/Trips';
 import Auth from './middleware/Auth';
 
 const app = express();
-
+const router = express.Router();
 app.use(express.json());
 
 // Swagger definition
@@ -49,9 +49,11 @@ const swaggerSpec = swaggerJSDoc(options);
 // use swagger-Ui-express for your app documentation endpoint
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.get('/', (request, response) => {
+router.get('/', (request, response) => {
   return response.status(200).send('Welcome page of Wayfarer ADC Nodejs REST API');
 });
+
+app.use('/api/v1', router);
 
 app.post('/api/v1/auth/signup', User.create);
 app.post('/api/v1/auth/signin', Auth.verifyToken, User.login);
